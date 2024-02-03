@@ -58,9 +58,7 @@ export default{
 </template>
 
 <style>
-body{
 
-}
 p{
     font-size:3em;
     font-family: 'Lalezar', system-ui;
