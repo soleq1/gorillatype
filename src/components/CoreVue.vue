@@ -12,7 +12,9 @@ import * as wordData from '../words.json';
 
 
 export default{
-
+    props:{
+      backGround:  String
+    },
     data(){
         return{
             words:[],
@@ -30,9 +32,10 @@ export default{
             classList: ref([]),
             correctScore: 0,
             wrongScore: 0,
-            firstCol: localStorage.getItem('Typed') || null,
-            secondCol: localStorage.getItem('Base') || null,
-            thirdCol: localStorage.getItem('Wrong') || null,
+            firstCol: localStorage.getItem('Typed') || 'green',
+            secondCol: localStorage.getItem('Base') || 'white',
+            thirdCol: localStorage.getItem('Wrong') || 'red',
+            backCol: this.backGround,
         }
     },
     
@@ -68,20 +71,22 @@ export default{
         //Force focused Input
         this.$refs.inputRef.focus();  
         console.log(localStorage.getItem('wordCount'));
-        
+
 
         
         this.words = wordData.default   
         //Calls function on load
         this.randomWords()
         setInterval(this.wordCountVal,1500)
+
+
         
         
     },
     watch: {
       userWord: 'updateUnderlinedIndex',
       
-     
+      
 
       
       displayedWords(){
@@ -98,6 +103,9 @@ export default{
         },
         thirdCol(){
           localStorage.setItem('Wrong',this.thirdCol)
+        },
+        backCol(){
+          localStorage.setItem('Background',this.backCol)
         }
       
       
@@ -106,6 +114,7 @@ export default{
     methods:{ 
      wordCountVal(){
       const val = localStorage.getItem('wordCount')
+   
       // console.log(val);
       if (val == null){
         return
@@ -153,9 +162,12 @@ export default{
    
       handleBlur() {
       // Refocus the input when it loses focus
+      // this.$refs.inputRef.focus();
+    },
+    checkblur(){
       this.$refs.inputRef.focus();
     },
-   
+
     WpmMath(){
       // Equation based off https://www.speedtypingonline.com/typing-equations 
       this.WPM = (this.correctScore / 5 / (this.time /60))
@@ -245,10 +257,11 @@ export default{
         this.wrongScore = 0
         this.classList.length = 0
         this.acc = null
+        this.$refs.inputRef.focus();
         
       },
       saveScore(){
-        let today = new Date();
+        let today = new Date(); 
 let dd = today.getDate();
 let mm = today.getMonth() + 1;
 let yyyy = today.getFullYear();
@@ -300,26 +313,31 @@ localStorage.setItem('records', JSON.stringify(filteredRecord));
 </script>
 
 <template>
-    <div>
+  <div>
+  <div>
+
+  
 
       <div class="color">
 
   <input type="color" id="favcolor" name="favcolor" v-model="firstCol">
   <input type="color"  name="favcolor" v-model="secondCol">
   <input type="color"  name="favcolor" v-model="thirdCol">
+  <input class="backdrop"  type="color" name="favcolor" v-model="backCol" />
       </div>
       <div class="color">
           <div>Typed </div>
           <div>Base </div>
           <div>Wrong </div>
-      </div>
+          <div >BackDrop</div>
+        </div>
         <div class="Core">
         
           <div>{{ time.toFixed(2) }}</div>
           <p class="cont" :style="{color: this.secondCol}">
             <span   v-for="(letter, index) in splitDisplayWords" :key="index">
              
-              <span class="letter" :style="{ 'text-decoration': letter.isUnderlined ? 'underline' : 'none', color: classList[index] }">                
+              <span @click="checkblur" class="letter" :style="{ 'text-decoration': letter.isUnderlined ? 'underline' : 'none', color: classList[index] }">                
                 {{ letter.letter }}
 
               </span>
@@ -370,17 +388,20 @@ localStorage.setItem('records', JSON.stringify(filteredRecord));
         </div>
 
       </div>
-
+    </div>
 </template>
 
 <style scoped>
+
 .color{
   /* background-color: white; */
   /* color:black; */
   display:flex;
   justify-content: center;
-  gap:20px;
-  text-align: center;
+  gap:25px;
+  /* text-align:center; */
+
+  align-content: right;
 
 }
 .letter{
@@ -477,5 +498,15 @@ font-family: 'Lalezar', system-ui;
   margin:5px 0;
   padding:0 20px;
   background-color: rgb(39, 40, 41);
+}
+.backdrop:hover:before{
+  content:'Refresh To see Changes';
+  position: absolute;
+  font-size:16px;
+  margin-top:-1.5em;
+  /* margin-top:20px; */
+}
+input{
+  cursor:pointer;
 }
 </style>
