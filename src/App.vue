@@ -5,30 +5,30 @@ import CoreVue from './components/CoreVue.vue';
 import NavVue from './components/NavVue.vue'
 import FooterVue from './components/FooterVue.vue';
 import { watch } from 'vue';
-
+import {inject} from '@vercel/analytics';
 
 
 
 const background = localStorage.getItem('Background');
 document.body.style.backgroundColor = background;
-const update = () =>{
+// const update = () =>{
 
-  setInterval(() =>{
-    const back = localStorage.getItem('Background') ;
+//   setInterval(() =>{
+//     const back = localStorage.getItem('Background') ;
     
-    if (back != background ){
-      document.body.style.backgroundColor = back;
+//     if (back != background ){
+//       document.body.style.backgroundColor = back;
       
-    }else{
-      return;
-    }
+//     }else{
+//       return;
+//     }
     
     
-  },1500)
-}
+//   },1500)
+// }
 
 
-
+inject()
 </script>
   
 <template  >
