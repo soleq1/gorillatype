@@ -5,8 +5,8 @@
 
 import {  ref, } from 'vue';
 import * as wordData from '../words.json';
-
-
+import { error } from 'console';
+import axios from 'axios';
 
 
 
@@ -36,6 +36,8 @@ export default{
             secondCol: localStorage.getItem('Base') || 'white',
             thirdCol: localStorage.getItem('Wrong') || 'red',
             backCol: this.backGround,
+            username:localStorage.getItem('Username') || null,
+            errmsg: null,
         }
     },
     
@@ -106,12 +108,41 @@ export default{
         },
         backCol(){
           localStorage.setItem('Background',this.backCol)
+        },
+        username(){
+          localStorage.setItem('Username',this.username)
         }
       
       
   },    
     
     methods:{ 
+
+    sanitizeInput(event) {
+      this.inputValue = event.target.value.replace(/\s/g, ''); // Remove all spaces
+    },
+    preventSpace(event) {
+      if (event.key === ' ') {
+        event.preventDefault(); // Prevent the space key from being entered
+      }
+    },
+      async handleLeaderboard(){
+        console.log(this.WPM, this.acc, this.wordCount)
+        try{
+
+          const response = await axios.post('https://gorillatypeserver.onrender.com/score',{username:this.username, wpm :this.WPM.toFixed(2),acc: this.acc.toFixed(2), typeTest:  this.wordCount})
+          
+        }catch(error){
+          console.log(error)
+          // this.errmsg = this.username + 'has higher recorded Score'
+          
+          this.errmsg =  "Need Username to submit"
+          const timer =  setTimeout(() =>{
+            this.errmsg = null
+            clearTimeout(timer)
+          },1500)
+        }
+      },
      wordCountVal(){
       const val = localStorage.getItem('wordCount')
    
@@ -287,6 +318,7 @@ today = mm + '-' + dd + '-' + yyyy;
         
       },
       handleDelete(index){
+
         const newRecord = [...this.records];
 const filteredRecord = newRecord.filter((record, recordIndex) => recordIndex !== index);
 
@@ -314,22 +346,26 @@ localStorage.setItem('records', JSON.stringify(filteredRecord));
 
 <template>
   <div>
+    <div class="color" style="margin-bottom:10px" >
+
+      <input :readonly="startedTyping" @input="cleanInput" @keypress="preventSpace" maxlength="14" class="name" placeholder="Enter Username  pre-test" v-model="username" type="text">  
+    </div>
   <div>
 
   
 
-      <div class="color">
+    <div class="color">
+      <input type="color" id="favcolor" name="favcolor" v-model="firstCol">
+      <input type="color"  name="favcolor" v-model="secondCol">
+      <input type="color"  name="favcolor" v-model="thirdCol">
+      <input class="backdrop"  type="color" name="favcolor" v-model="backCol" />
+    </div>
+    <div class="color">
+      <div>Typed </div>
+      <div>Base </div>
+      <div>Wrong </div>
+      <div >BackDrop</div>
 
-  <input type="color" id="favcolor" name="favcolor" v-model="firstCol">
-  <input type="color"  name="favcolor" v-model="secondCol">
-  <input type="color"  name="favcolor" v-model="thirdCol">
-  <input class="backdrop"  type="color" name="favcolor" v-model="backCol" />
-      </div>
-      <div class="color">
-          <div>Typed </div>
-          <div>Base </div>
-          <div>Wrong </div>
-          <div >BackDrop</div>
         </div>
         <div class="Core">
         
@@ -369,8 +405,9 @@ localStorage.setItem('records', JSON.stringify(filteredRecord));
             <button @click="saveScore" v-if="this.WPM && this.acc" class="save">
               Save Score
             </button>
-
-        </div>  
+            <button   @click="handleLeaderboard" class="save" v-if="this.WPM && this.acc && this.wordCount == 10">Submit To LeaderBoard</button>
+          </div>  
+          <div class="error" v-if="errmsg">{{ errmsg }}</div>
 
       </div>
       <div class="recordContainer">
@@ -427,6 +464,12 @@ p{
       align-self: center;
 
     
+  }
+  .error{
+    justify-content: center;
+    display:flex;
+    font-size:24px;
+    font-style:bold;
   }
   .button{
     font-family: 'Lalezar', system-ui;
@@ -508,5 +551,12 @@ font-family: 'Lalezar', system-ui;
 }
 input{
   cursor:pointer;
+}
+.name{
+  border:none;
+  font-family: 'Lalezar', system-ui;
+  font-size:24px;
+
+  
 }
 </style>
