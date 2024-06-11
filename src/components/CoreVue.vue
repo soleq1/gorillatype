@@ -130,7 +130,7 @@ export default{
         console.log(this.WPM, this.acc, this.wordCount)
         try{
 
-          const response = await axios.post('https://gorillatypeserver.onrender.com/score',{username:this.username, wpm :this.WPM.toFixed(2),acc: this.acc.toFixed(2), typeTest:  this.wordCount})
+          const response = await axios.post('https://gorillatypeserver-production.up.railway.app/score',{username:this.username, wpm :this.WPM.toFixed(2),acc: this.acc.toFixed(2), typeTest:  this.wordCount})
           
         }catch(error){
           console.log(error)

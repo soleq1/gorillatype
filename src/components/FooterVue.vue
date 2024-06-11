@@ -23,7 +23,7 @@ export default{
             
             try{
                 
-                const send = await axios.post('https://gorillatypeserver.onrender.com',{email: this.email,subscribed:'subscribed'})
+                const send = await axios.post('https://gorillatypeserver-production.up.railway.app',{email: this.email,subscribed:'subscribed'})
                 console.log('success',send.data);
 
                 

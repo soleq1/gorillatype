@@ -29,7 +29,7 @@ export default{
              this.isActive = this.isActive ? false : true;
             try{
 
-                const response = await axios.post('https://gorillatypeserver.onrender.com/data',{username:this.username});
+                const response = await axios.post('https://gorillatypeserver-production.up.railway.app/data',{username:this.username});
                 this.leaderboard = response.data
                 // console.log(response)
                 console.log(this.leaderboard[0].date_submitted)
