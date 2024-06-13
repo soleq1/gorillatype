@@ -22,7 +22,7 @@ export default{
             // e.preventDefault();
             
             try{
-                
+
                 const send = await axios.post('https://gorillatypeserver-production.up.railway.app',{email: this.email,subscribed:'subscribed'})
                 console.log('success',send.data);
 
